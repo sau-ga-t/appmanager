@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/action_item1"
+        android:title="Dashboard"
+        android:icon="@drawable/outline_dashboard_24" />
+
+    <item
+        android:id="@+id/action_item2"
+        android:title="App List"
+        android:icon="@drawable/baseline_apps_24" />
+
+    <item
+        android:id="@+id/action_item3"
+        android:title="Tools"
+        android:icon="@drawable/outline_handyman_24" />
+
+    <item
+        android:id="@+id/action_item4"
+        android:title="Settings"
+        android:icon="@drawable/outline_settings_24" />
+
+</menu>
