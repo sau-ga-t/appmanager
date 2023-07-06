@@ -9,4 +9,5 @@ App manager for android to uninstall multiple apps at once, view app usage dashb
 ## Stack
 - Kotlin
 - Viewmodel
+- Repository Pattern (There is absolutely no reason to use this)
 - IDK
