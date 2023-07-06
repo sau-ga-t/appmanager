@@ -1,3 +1,4 @@
+[![Android CI](https://github.com/sau-ga-t/appmanager/actions/workflows/generate-apk-debug.yml/badge.svg)](https://github.com/sau-ga-t/appmanager/actions/workflows/generate-apk-debug.yml)
 # App Manager
 App manager for android to uninstall multiple apps at once, view app usage dashboard, permissions and more features getting added.
 
