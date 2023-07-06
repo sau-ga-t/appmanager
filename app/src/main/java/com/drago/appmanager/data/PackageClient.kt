@@ -6,12 +6,14 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.util.Log
+import com.drago.appmanager.models.PackageDetails
 import java.io.File
+import java.lang.Exception
 
 class PackageClient(private val packageManager: PackageManager):PackageService {
     override fun getInstalledApps(): List<InstalledApp> {
         val appList = packageManager.getInstalledPackages(PackageManager.GET_META_DATA)
-        return  appList.filter { it.applicationInfo.flags.and(ApplicationInfo.FLAG_SYSTEM) == 1  }.map {
+        return  appList.filter { it.applicationInfo.flags.and(ApplicationInfo.FLAG_SYSTEM) == 0  }.map {
             val packageName: String = it.packageName
             val appName: String = it.applicationInfo.loadLabel(packageManager).toString()
             val appIcon: Drawable = it.applicationInfo.loadIcon(packageManager)
@@ -20,40 +22,44 @@ class PackageClient(private val packageManager: PackageManager):PackageService {
             InstalledApp(appName, packageName, appIcon, version,appSize)
         }.sortedBy { it.appName }
     }
-    fun getPackageSize(packageInfo: PackageInfo):Long{
+    private fun getPackageSize(packageInfo: PackageInfo):Long{
         val appInfo = packageInfo.applicationInfo
         val apkPath = appInfo.sourceDir
         val apkFile = File(apkPath)
         return apkFile.length()
     }
 
-    override fun getPackageDetails(packageName: String): String {
+    override fun getPackageDetails(packageName: String): PackageDetails {
         val permissions = getPackagePermissions(packageName)
-        if (!permissions.isEmpty()){
+        val permList = mutableListOf<String>()
             permissions.forEach {
-                Log.d("PERMISSION_ALL", "getPermission: $it")
+                permList.add(it)
             }
-            return permissions.first()
-        }else{
-            return "No Permissions required"
-        }
+         return PackageDetails(permList)
     }
 
     private fun getPackagePermissions(packageName: String): List<String> {
-        val packageInfo = packageManager.getPackageInfo(packageName, PackageManager.GET_PERMISSIONS)
         val permissions = mutableListOf<String>()
-        val requestedPermissions = packageInfo.requestedPermissions
-        if (requestedPermissions != null) {
-            for (permission in requestedPermissions) {
-                try {
-                    val permissionInfo = packageManager.getPermissionInfo(permission, 0)
-                    permissions.add(permissionInfo.loadLabel(packageManager).toString())
-                } catch (e: PackageManager.NameNotFoundException) {
-                    e.printStackTrace()
+
+        try {
+            val packageInfo = packageManager.getPackageInfo(packageName, PackageManager.GET_PERMISSIONS)
+            val requestedPermissions = packageInfo.requestedPermissions
+            if (requestedPermissions != null) {
+                for (permission in requestedPermissions) {
+                    try {
+                        val permissionInfo = packageManager.getPermissionInfo(permission, 0)
+                        permissions.add(permissionInfo.loadLabel(packageManager).toString())
+                    } catch (e: PackageManager.NameNotFoundException) {
+                        e.printStackTrace()
+                    }
                 }
             }
+        }catch (e:Exception){
+            e.message?.let { permissions.add(it) }
         }
         return permissions
+
+
     }
 
 }

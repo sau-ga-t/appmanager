@@ -4,11 +4,14 @@ import InstalledApp
 import android.content.Context
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
+import androidx.navigation.NavController
+import androidx.navigation.Navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -16,11 +19,13 @@ import com.drago.appmanager.R
 import com.drago.appmanager.databinding.ItemAppBinding
 import com.drago.appmanager.viewmodels.AppsViewModel
 
+
 class AppListAdapter(
     private val viewModel: AppsViewModel,
     private val lifecycleOwner: LifecycleOwner,
     private val selectedIcon:Drawable,
-    private val context: Context
+    private val context: Context,
+    private val navController: NavController
 ) : ListAdapter<InstalledApp, AppListAdapter.AppViewHolder>(AppDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AppViewHolder {
@@ -30,12 +35,12 @@ class AppListAdapter(
 
     override fun onBindViewHolder(holder: AppViewHolder, position: Int) {
         val app = getItem(position)
-        holder.itemView.isActivated = viewModel.getSelectedItems().contains(position)
+        holder.itemView.isActivated = viewModel.getSelectedItems().value!!.contains(position)
 
         holder.bind(app)
     }
 
-    inner class AppViewHolder(private val binding: ItemAppBinding) : RecyclerView.ViewHolder(binding.root), View.OnClickListener {
+    inner class AppViewHolder(private val binding: ItemAppBinding) : RecyclerView.ViewHolder(binding.root), View.OnClickListener, View.OnLongClickListener{
 
         init {
             itemView.setOnClickListener(this)
@@ -45,8 +50,8 @@ class AppListAdapter(
             binding.packageName.text = app.packageName //getFormattedSize(app.appSize)
             binding.appName.setTypeface(null, Typeface.BOLD)
 
-            itemView.isActivated = viewModel.getSelectedItems().contains(adapterPosition)
-            val isItemSelected = viewModel.getSelectedItems().contains(adapterPosition)
+            itemView.isActivated = viewModel.getSelectedItems().value!!.contains(adapterPosition)
+            val isItemSelected = viewModel.getSelectedItems().value!!.contains(adapterPosition)
             itemView.isActivated = isItemSelected
 
             val viewIcon:Drawable = if (isItemSelected) selectedIcon else app.appIcon
@@ -59,11 +64,20 @@ class AppListAdapter(
         }
 
         override fun onClick(v: View?) {
-            val position = adapterPosition
+            val bundle = Bundle()
+            val app = getItem(adapterPosition)
+            bundle.putStringArray("PACKAGE_NAME_CONSTANT", arrayOf(app.packageName,app.appName,app.appIcon.toString()))
+            navController.navigate(R.id.action_FirstFragment_to_AppDetailsFragment, bundle)
+            }
+
+        override fun onLongClick(v: View?): Boolean {val position = adapterPosition
             if (position != RecyclerView.NO_POSITION) {
                 viewModel.toggleItemSelection(position)
-                viewModel.fetchAppDetails(position)
-            }        }
+            }
+            return true
+        }
+
+
     }
 
     private class AppDiffCallback : DiffUtil.ItemCallback<InstalledApp>() {
@@ -82,7 +96,7 @@ class AppListAdapter(
         return android.text.format.Formatter.formatFileSize(context, appSize)
     }
     init {
-        viewModel.selectedItems.observe(lifecycleOwner) {
+        viewModel.getSelectedItems().observe(lifecycleOwner) {
             notifyDataSetChanged()
         }
     }

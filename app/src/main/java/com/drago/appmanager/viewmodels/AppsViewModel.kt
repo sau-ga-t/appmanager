@@ -17,9 +17,9 @@ import kotlinx.coroutines.withContext
 
 class AppsViewModel(application: Application) : AndroidViewModel(application) {
     private val installedApps = MutableLiveData<List<InstalledApp>>()
-    val selectedItems: MutableLiveData<MutableList<Int>> = MutableLiveData()
+    private val selectedItems  = MutableLiveData<MutableList<Int>>()
     var packageRepository: PackageRepository
-    val packageStorage:MutableLiveData<String> = MutableLiveData()
+    private val packageStorage:MutableLiveData<String> = MutableLiveData()
 
     init {
         selectedItems.value = mutableListOf()
@@ -40,8 +40,8 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
         selectedItems.value = selectedPositions
     }
 
-    fun getSelectedItems(): List<Int> {
-        return selectedItems.value ?: emptyList()
+    fun getSelectedItems(): LiveData<List<Int>> {
+        return selectedItems as LiveData<List<Int>>
     }
 
     fun clearSelection() {
@@ -61,15 +61,6 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
             val apps = packageRepository.getInstalledPackages()
             withContext(Dispatchers.Main) {
                 installedApps.value = apps
-            }
-        }
-    }
-    @OptIn(DelicateCoroutinesApi::class)
-    fun fetchAppDetails(position: Int) {
-        GlobalScope.launch(Dispatchers.IO) {
-            val packageStore = packageRepository.getPackageDetails(installedApps.value!!.get(position).packageName)
-            withContext(Dispatchers.Main) {
-                packageStorage.value = packageStore
             }
         }
     }
