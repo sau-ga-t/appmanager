@@ -5,6 +5,7 @@ App manager for android to uninstall multiple apps at once, view app usage dashb
 - [ ] Ability to select multiple apps at once and uninstall them, or export them
 - [ ] View permissions, app usage, certificates, activities and relevant infos about installed apps
 - [ ] View app usage dashboard, and privacy dashboard
+- [ ] Need to format the code and stop passing strings as arguments and most importantly viewmodels and context into listadapters
       
 ## Stack
 - Kotlin
