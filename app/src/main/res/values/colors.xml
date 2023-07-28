@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">@color/material_dynamic_primary50</color>
-    <color name="secondary">@color/material_dynamic_secondary50</color>
-    <color name="tertiary">@color/material_dynamic_tertiary50</color>
+    <color name="primary">@color/material_dynamic_primary40</color>
+    <color name="secondary">@color/material_dynamic_secondary40</color>
+    <color name="tertiary">@color/material_dynamic_tertiary40</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 </resources>

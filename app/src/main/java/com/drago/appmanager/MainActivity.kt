@@ -1,5 +1,6 @@
 package com.drago.appmanager
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import com.google.android.material.snackbar.Snackbar
@@ -25,6 +26,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
+        window.statusBarColor = Color.TRANSPARENT
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
